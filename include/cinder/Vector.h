@@ -81,4 +81,40 @@ template<> struct VECDIM<2,int>		{ typedef ivec2	TYPE; };
 template<> struct VECDIM<3,int>		{ typedef ivec3	TYPE; };
 template<> struct VECDIM<4,int>		{ typedef ivec4	TYPE; };
 
+
+// tvec2<int, highp>
+//
+//struct Vec2f : vec2
+//{
+//  Vec2f(const vec3& v)
+//  {
+//  }
+//  static vec2 zero() { return vec2(); }
+//};
+//
+//struct Vec3f : vec3
+//{
+//  Vec3f(const vec3& v)
+//  {
+//  }
+//  static vec3 zero() { return vec3(); }
+//};
+//
+//struct Vec4f : vec4
+//{
+//
+//};
+//
+////typedef Vec2<float> Vec2f;
+////typedef Vec2<int>   Vec2i;
+////typedef Vec3<float> Vec3f;
+////typedef Vec3<int>   Vec3i;
+////typedef Vec4<float> Vec4f;
+////typedef Vec4<int>   Vec4i;
+
+template<class T> using Vec2T = glm::tvec2<T, glm::defaultp>;
+template<class T> using Vec3T = glm::tvec3<T, glm::defaultp>;
+template<class T> using Vec4T = glm::tvec4<T, glm::defaultp>;
+
 } // namespace cinder
+
