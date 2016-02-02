@@ -129,4 +129,30 @@ glm::tmat4x4<T,glm::defaultp> lastFrame(
 	const glm::tvec3<T,glm::defaultp> &lastPoint 
 );
 
+//template<typename T>
+//struct Matrix22 : mat2
+//{
+//
+//};
+//
+//template<typename T>
+//struct Matrix33 : mat3
+//{
+//
+//};
+//
+//template<typename T>
+//struct Matrix44 : mat4
+//{
+//
+//};
+//
+//typedef Matrix22<float> Matrix22f;
+//typedef Matrix33<float> Matrix33f;
+//typedef Matrix44<float> Matrix44f;
+
+template<class T> using Mat2T = glm::tmat2x2<T, glm::defaultp>;
+template<class T> using Mat3T = glm::tmat3x3<T, glm::defaultp>;
+template<class T> using Mat4T = glm::tmat4x4<T, glm::defaultp>;
+
 } // namespace cinder
