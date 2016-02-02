@@ -32,6 +32,8 @@
 
 #pragma once
 
+#define GLM_SWIZZLE
+
 //#include "../fwd.hpp"
 #include "type_vec.hpp"
 #ifdef GLM_SWIZZLE
