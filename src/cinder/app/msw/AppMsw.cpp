@@ -89,7 +89,14 @@ void AppMsw::launch()
 		platformMsw->directConsoleToCout( true );
 	}
 
-	mImpl->run();
+  __try
+  {
+	  mImpl->run();
+  }
+  __except (CrashReportUtilsCinder::DumpExc(GetExceptionInformation()), EXCEPTION_CONTINUE_SEARCH)
+  {
+    /* Never get there  */
+  } 
 }
 
 WindowRef AppMsw::createWindow( const Window::Format &format )
