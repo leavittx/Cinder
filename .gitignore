@@ -38,6 +38,6 @@ docs/*/node_modules
 *.pyc
 
 # CinderBlocks
-blocks/
+#blocks/
 !blocks/[__AppTemplates,Box2D,Cairo,FMOD,LocationManager,MotionManager,OSC,QuickTime,TUIO]
 
