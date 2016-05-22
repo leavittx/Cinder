@@ -8,3 +8,9 @@
 	path = include/boost
 	url = git://github.com/cinder/Cinder-Boost.git
 	branch = boost_1_58
+[submodule "Cinder-KCB2"]
+	path = Cinder-KCB2
+	url = https://github.com/leavittx/Cinder-KCB2.git
+[submodule "blocks/Cinder-KCB2"]
+	path = blocks/Cinder-KCB2
+	url = https://github.com/leavittx/Cinder-KCB2.git
