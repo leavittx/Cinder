@@ -14,3 +14,7 @@
 [submodule "blocks/Cinder-Hap2"]
 	path = blocks/Cinder-Hap2
 	url = https://github.com/leavittx/Cinder-Hap2.git
+[submodule "blocks/Cinder-KCB2"]
+	path = blocks/Cinder-KCB2
+	url = https://github.com/leavittx/Cinder-KCB2.git
+
