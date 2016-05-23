@@ -18,3 +18,6 @@
 	path = blocks/Cinder-KCB2
 	url = https://github.com/leavittx/Cinder-KCB2.git
 
+[submodule "blocks/Cinder-Asio"]
+	path = blocks/Cinder-Asio
+	url = https://github.com/BanTheRewind/Cinder-Asio.git
