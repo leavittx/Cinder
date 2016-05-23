@@ -8,3 +8,9 @@
 	path = include/boost
 	url = git://github.com/cinder/Cinder-Boost.git
 	branch = boost_1_58
+[submodule "blocks/Cinder-Warping"]
+	path = blocks/Cinder-Warping
+	url = https://github.com/leavittx/Cinder-Warping.git
+[submodule "blocks/Cinder-Hap2"]
+	path = blocks/Cinder-Hap2
+	url = https://github.com/leavittx/Cinder-Hap2.git
