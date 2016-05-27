@@ -174,6 +174,7 @@ int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
   } \
   __except (CrashReportUtilsCinder::DumpExc(GetExceptionInformation()), EXCEPTION_CONTINUE_SEARCH) \
   { \
+    return 0; \
     /* Never get there  */ \
   } \
 }
