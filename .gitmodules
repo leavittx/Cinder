@@ -14,3 +14,9 @@
 [submodule "blocks/Cinder-KCB2"]
 	path = blocks/Cinder-KCB2
 	url = https://github.com/leavittx/Cinder-KCB2.git
+[submodule "blocks/Cinder-MIDI2"]
+	path = blocks/Cinder-MIDI2
+	url = https://github.com/brucelane/Cinder-MIDI2.git
+[submodule "blocks/Cinder-Warping"]
+	path = blocks/Cinder-Warping
+	url = https://github.com/leavittx/Cinder-Warping.git
