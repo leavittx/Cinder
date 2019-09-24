@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <fstream>
+
 #include "cinder/app/AppBase.h"
 #include "cinder/msw/CinderWindowsFwd.h"
 #include "CrashReportUtils.h"
