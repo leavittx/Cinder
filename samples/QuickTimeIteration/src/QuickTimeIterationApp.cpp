@@ -1,11 +1,10 @@
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
-#include "cinder/Surface.h"
 #include "cinder/gl/gl.h"
+#include "cinder/Surface.h"
 #include "cinder/gl/Texture.h"
-#include "cinder/Rand.h"
-#include "cinder/qtime/QuickTime.h"
-#include "cinder/ImageIo.h"
+#include "cinder/qtime/QuickTimeGl.h"
+//#include "cinder/Rand.h"
 
 #include <iostream>
 

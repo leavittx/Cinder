@@ -25,6 +25,7 @@
 
 #include "cinder/app/AppBase.h"
 #include "cinder/msw/CinderWindowsFwd.h"
+#include "CrashReportUtils.h"
 
 namespace cinder { namespace app {
 
@@ -89,9 +90,58 @@ class CI_API AppMsw : public AppBase {
 	bool								mConsoleWindowEnabled;
 };
 
+
+namespace ExceptionHandlers
+{
+  inline LONG WINAPI VectoredExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
+  {
+    std::ofstream f;
+    f.open("VectoredExceptionHandler.txt", std::ios::out | std::ios::trunc);
+    f << std::hex << pExceptionInfo->ExceptionRecord->ExceptionCode << std::endl;
+    f.close();
+
+    CrashReportUtilsCinder::DumpExc(pExceptionInfo);
+
+    return EXCEPTION_CONTINUE_SEARCH;
+  }
+
+  inline LONG WINAPI TopLevelExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
+  {
+    std::ofstream f;
+    f.open("TopLevelExceptionHandler.txt", std::ios::out | std::ios::trunc);
+    f << std::hex << pExceptionInfo->ExceptionRecord->ExceptionCode << std::endl;
+    f.close();
+
+    CrashReportUtilsCinder::DumpExc(pExceptionInfo);
+
+    return EXCEPTION_CONTINUE_SEARCH;
+  }
+
+ inline void myInvalidParameterHandler(const wchar_t* expression,
+    const wchar_t* function,
+    const wchar_t* file,
+    unsigned int line,
+    uintptr_t pReserved)
+  {
+    wprintf(L"Invalid parameter detected in function %s."
+      L" File: %s Line: %d\n", function, file, line);
+    wprintf(L"Expression: %s\n", expression);
+    //abort();
+  }
+
+}
+
+
 template<typename AppT>
 void AppMsw::main( const RendererRef &defaultRenderer, const char *title, const SettingsFn &settingsFn )
 {
+  //AddVectoredExceptionHandler(0, ExceptionHandlers::VectoredExceptionHandler);
+  SetUnhandledExceptionFilter(ExceptionHandlers::TopLevelExceptionHandler);
+
+  _invalid_parameter_handler oldHandler, newHandler;
+  newHandler = ExceptionHandlers::myInvalidParameterHandler;
+  oldHandler = _set_invalid_parameter_handler(newHandler);
+
 	AppBase::prepareLaunch();
 
 	Settings settings;
@@ -110,11 +160,23 @@ void AppMsw::main( const RendererRef &defaultRenderer, const char *title, const 
 }
 
 #define CINDER_APP_MSW( APP, RENDERER, ... )                                                                        \
+int WinMainImpl() \
+{ \
+  cinder::app::RendererRef renderer(new RENDERER); \
+  cinder::app::AppMsw::main<APP>(renderer, #APP, ##__VA_ARGS__); \
+  return 0; \
+} \
 int __stdcall WinMain( HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nCmdShow*/ )\
-{                                                                                                                   \
-    cinder::app::RendererRef renderer( new RENDERER );                                                              \
-    cinder::app::AppMsw::main<APP>( renderer, #APP, ##__VA_ARGS__ );                                                \
-    return 0;                                                                                                       \
+{ \
+  __try \
+  { \
+    return WinMainImpl(); \
+  } \
+  __except (CrashReportUtilsCinder::DumpExc(GetExceptionInformation()), EXCEPTION_CONTINUE_SEARCH) \
+  { \
+    return 0; \
+    /* Never get there  */ \
+  } \
 }
 
 } } // namespace cinder::app
