@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <filesystem>
 
 #include <Windows.h>
 #include <Psapi.h>
@@ -10,12 +11,12 @@
 #include <dbghelp.h>
 #pragma warning(pop)
 
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/format.hpp>
 
 namespace CrashReportUtilsCinder
 {
+  namespace fs = std::experimental::filesystem;
+
   // Source: http://blogs.msdn.com/b/joshpoley/archive/2008/05/19/prolific-usage-of-minidumpwritedump-automating-crash-dump-analysis-part-0.aspx
   inline HRESULT GenerateCrashDump(const std::string& dumpFilePath, MINIDUMP_TYPE flags, EXCEPTION_POINTERS *seh = nullptr)
   {
@@ -77,18 +78,16 @@ namespace CrashReportUtilsCinder
                MiniDumpWithTokenInformation       // includes security token related data.
   };
 
-  inline boost::filesystem::path GetExeFilePath()
+  inline fs::path GetExeFilePath()
   {
     char exeFilePath[MAX_PATH];
     GetModuleFileNameA(nullptr, exeFilePath, MAX_PATH);
     //GetModuleBaseNameA(nullptr, exeFileName, MAX_PATH);
-    return boost::filesystem::path(exeFilePath);
+    return fs::path(exeFilePath);
   }
 
   inline bool MakeDumpDirWithData(const std::string& dumpDirName)
   {
-    namespace fs = boost::filesystem;
-
     // Current working directory
     //auto workingDirPath(fs::current_path());
     //auto fullPathStem = workingDirPath.stem();
@@ -96,7 +95,7 @@ namespace CrashReportUtilsCinder
 
     auto dumpDirPath = /*workingDirPath / */ fs::path(dumpDirName);
 
-    boost::system::error_code returnedError;
+    std::error_code returnedError;
     fs::create_directory(dumpDirPath, returnedError);
 
     if (returnedError)
@@ -150,7 +149,7 @@ namespace CrashReportUtilsCinder
 
   inline void DumpExc(EXCEPTION_POINTERS* pExc)
   {
-    namespace fs = boost::filesystem;
+    namespace fs = fs;
 
     // Call MiniDumpWriteDump to produce the needed dump file
     // TODO: possibly add more flags: https://msdn.microsoft.com/ru-ru/library/windows/desktop/ms680519(v=vs.85).aspx
