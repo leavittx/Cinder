@@ -42,11 +42,55 @@
 #undef min
 #undef max
 #pragma comment(lib, "gdiplus")
+#include <dwmapi.h> // For window transparency stuff
+#pragma comment(lib, "Dwmapi")
 
 using std::string;
 using std::wstring;
 using std::vector;
 using std::pair;
+
+namespace
+{
+  bool enableBlurBehind(HWND hwnd)
+  {
+    HRESULT hr = S_OK;
+
+    // Create and populate the Blur Behind structure
+    DWM_BLURBEHIND bb = { 0 };
+
+    // Enable Blur Behind and apply to the entire client area
+    bb.dwFlags = DWM_BB_ENABLE;
+    bb.fEnable = true;
+    bb.hRgnBlur = NULL; // Apply to the entire client area
+
+                        // Apply Blur Behind
+    hr = DwmEnableBlurBehindWindow(hwnd, &bb);
+    if (SUCCEEDED(hr))
+    {
+      return true;
+    }
+    return false;
+  }
+
+  bool enableBlurExtendIntoClientAll(HWND hwnd)
+  {
+    HRESULT hr = S_OK;
+
+    // Negative margins have special meaning to DwmExtendFrameIntoClientArea.
+    // Negative margins create the "sheet of glass" effect, where the client 
+    // area is rendered as a solid surface without a window border.
+    MARGINS margins = {-1};
+
+    // Extend the frame across the whole window.
+    hr = DwmExtendFrameIntoClientArea(hwnd,&margins);
+    if (SUCCEEDED(hr))
+    {
+      return true;
+    }
+    return false;
+  }
+}
 
 namespace cinder { namespace app {
 
@@ -393,6 +437,13 @@ void WindowImplMsw::createWindow( const ivec2 &windowSize, const std::string &ti
 		//killWindow();							// Reset The Display
 		return;		
 	}
+
+  // Enable blur behind
+  //auto success = enableBlurExtendIntoClientAll(mWnd);
+  //if( ! success )
+  //{
+  //  return;
+  //}
 
 	mDC = ::GetDC( mWnd );
 	if( ! mDC ) {
