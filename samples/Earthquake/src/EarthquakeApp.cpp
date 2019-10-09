@@ -11,9 +11,42 @@
 
 #include "Resources.h"
 
+// For transparency stuff
+#include <dwmapi.h>
+#pragma comment(lib, "Dwmapi.lib")
+
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+
+
+namespace
+{
+  // Use window compositing for transparency
+  // https://docs.microsoft.com/en-us/windows/win32/dwm/blur-ovw
+  inline bool enableBlurBehind(HWND hwnd)
+  {
+    HRESULT hr = S_OK;
+
+    // Create and populate the Blur Behind structure
+    DWM_BLURBEHIND bb = { 0 };
+
+    // Enable Blur Behind and apply to the entire client area
+    bb.dwFlags = DWM_BB_ENABLE;
+    bb.fEnable = true;
+    bb.hRgnBlur = NULL; // Apply to the entire client area
+
+                        // Apply Blur Behind
+    hr = DwmEnableBlurBehindWindow(hwnd, &bb);
+    if (SUCCEEDED(hr))
+    {
+      return true;
+    }
+    return false;
+  }
+}
+
 
 class EarthquakeApp : public App {
 public:
@@ -54,17 +87,20 @@ void EarthquakeApp::prepareSettings( Settings *settings )
 	settings->disableFrameRate();
 	settings->setResizable( true );
 	settings->setFullScreen( false );
+  settings->setBorderless( true );
 }
 
 void EarthquakeApp::setup()
 {
+  enableBlurBehind((HWND)getWindow()->getNative());
+
 	// Load the texture and create the sphere for the background.
 	mStars = gl::Texture2d::create( loadImage( loadResource( RES_STARS_PNG ) ) );
 	mStarSphere = gl::Batch::create( geom::Sphere().radius( 15000 ).subdivisions( 30 ), gl::getStockShader( gl::ShaderDef().texture() ) );
 
 	// Initialize state.
 	mSaveFrames = false;
-	mShowStars = true;
+	mShowStars = false;
 	mShowEarth = true;
 	mShowQuakes = true;
 	mShowText = true;
@@ -144,7 +180,12 @@ void EarthquakeApp::update()
 
 void EarthquakeApp::draw()
 {
-	gl::clear( Color( 1, 0, 0 ) );
+  // Won't work with transparency (have no idea why)
+  //gl::clearColor(ColorAf(0.f, 0.f, 0.f, 0.f));
+  //gl::clear();
+
+  // Will work with transparency
+  gl::clear(ColorAf(0.0f, 0.0f, 0.0f, 0.0f));
 
 	gl::ScopedDepth       depth( true );
 	gl::ScopedColor       color( 1, 1, 1 );
