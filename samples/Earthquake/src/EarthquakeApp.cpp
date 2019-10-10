@@ -87,12 +87,12 @@ void EarthquakeApp::prepareSettings( Settings *settings )
 	settings->disableFrameRate();
 	settings->setResizable( true );
 	settings->setFullScreen( false );
-  settings->setBorderless( true );
+    settings->setBorderless( true );
 }
 
 void EarthquakeApp::setup()
 {
-  enableBlurBehind((HWND)getWindow()->getNative());
+  //enableBlurBehind((HWND)getWindow()->getNative());
 
 	// Load the texture and create the sphere for the background.
 	mStars = gl::Texture2d::create( loadImage( loadResource( RES_STARS_PNG ) ) );
