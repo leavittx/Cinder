@@ -350,11 +350,11 @@ void WindowImplMsw::setWindowStyleValues()
 		mWindowStyle = WS_POPUP;										// Windows Style
 	}
 	else if( mBorderless ) {
-		mWindowExStyle = WS_EX_APPWINDOW;
+		mWindowExStyle = WS_EX_LAYERED;
 		mWindowStyle = WS_POPUP;
 	}
 	else {
-		mWindowExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES;				// Window Extended Style
+		mWindowExStyle = WS_EX_LAYERED | WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES;				// Window Extended Style
 		mWindowStyle = ( mResizable ) ? WS_OVERLAPPEDWINDOW
 			:	( WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MINIMIZEBOX & ~WS_MAXIMIZEBOX );	// Windows Style
 	}
@@ -401,6 +401,8 @@ void WindowImplMsw::createWindow( const ivec2 &windowSize, const std::string &ti
 		//killWindow();							// Reset The Display
 		return;		
 	}
+
+	SetLayeredWindowAttributes(mWnd, 0x0, 0, LWA_COLORKEY);
 
 	mDC = ::GetDC( mWnd );
 	if( ! mDC ) {
