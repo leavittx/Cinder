@@ -118,6 +118,10 @@ class CI_API AppBase {
 		bool	isAlwaysOnTop() const								{ return mDefaultWindowFormat.isAlwaysOnTop(); }
 		//! Sets whether the default window always remains above all other windows
 		void	setAlwaysOnTop( bool alwaysOnTop = true )			{ mDefaultWindowFormat.setAlwaysOnTop( alwaysOnTop ); }
+		//! Returns whether the default window will have transparent background (chrome/frame)
+		bool	isTransparent() const { return mDefaultWindowFormat.isTransparent(); }
+		//! Sets the default window to have transparent background (chrome/frame)
+		void	setTransparent(bool transparent = true) { mDefaultWindowFormat.setTransparent(transparent); }
 
 		//! Returns the display for the default window
 		DisplayRef	getDisplay() const								{ return mDefaultWindowFormat.getDisplay(); }

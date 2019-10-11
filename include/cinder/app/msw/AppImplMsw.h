@@ -134,6 +134,8 @@ class WindowImplMsw {
 	void			setBorderless( bool borderless );
 	bool			isAlwaysOnTop() const { return mAlwaysOnTop; }
 	void			setAlwaysOnTop( bool alwaysOnTop );
+	bool			isTransparent() const { return mTransparent; }
+	void			setTransparent( bool transparent );
 
 	AppImplMsw*				getAppImpl() { return mAppImpl; }
 	WindowRef				getWindow() { return mWindowRef; }
@@ -157,6 +159,8 @@ class WindowImplMsw {
 	void			onTouch( HWND hWnd, WPARAM wParam, LPARAM lParam );
 	virtual void	toggleFullScreen( const app::FullScreenOptions &options );
 
+	void            forceSetBorderless(bool borderless);
+
 	AppImplMsw				*mAppImpl;
 	WindowRef				mWindowRef;
   	HWND					mWnd;
@@ -165,7 +169,7 @@ class WindowImplMsw {
 	ivec2					mWindowOffset;
 	bool					mHidden;
 	int						mWindowWidthPx, mWindowHeightPx;
-	bool					mFullScreen, mBorderless, mAlwaysOnTop, mResizable;
+	bool					mFullScreen, mBorderless, mAlwaysOnTop, mResizable, mTransparent;
 	ivec2					mWindowedPos, mWindowedSizePx;
 	DisplayRef				mDisplay;
 	RendererRef				mRenderer;

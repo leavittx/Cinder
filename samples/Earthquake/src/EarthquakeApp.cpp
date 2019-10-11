@@ -93,6 +93,7 @@ void EarthquakeApp::prepareSettings( Settings *settings )
 	settings->setResizable( true );
 	settings->setFullScreen( false );
     settings->setBorderless( true );
+	settings->setTransparent( true );
 }
 
 void EarthquakeApp::setup()

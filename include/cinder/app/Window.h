@@ -148,7 +148,7 @@ class CI_API Window : public std::enable_shared_from_this<Window> {
 	struct Format {
 		Format( RendererRef renderer = RendererRef(), DisplayRef display = DisplayRef(), bool fullScreen = false, ivec2 size = ivec2( 640, 480 ), ivec2 pos = ivec2() )
 			: mRenderer( renderer ), mFullScreen( fullScreen ), mDisplay( display ), mSize( size ), mPos( pos ), mPosSpecified( false ),
-			mResizable( true ), mBorderless( false ), mAlwaysOnTop( false ), mFullScreenButtonEnabled( false ),
+			mResizable( true ), mBorderless( false ), mAlwaysOnTop( false ), mFullScreenButtonEnabled( false ), mTransparent( false ),
 			mTitleSpecified( false ), mTitle( "" )
 #if defined( CINDER_COCOA_TOUCH )
 			, mRootViewController( NULL )
@@ -237,6 +237,12 @@ class CI_API Window : public std::enable_shared_from_this<Window> {
 		Format&		fullScreenButton( bool enabled = true ) { mFullScreenButtonEnabled = enabled; return *this; }
 		//! On Mac OS X returns whether the native full screen toggle button is displayed. Defaults to \c false.
 		bool		isFullScreenButtonEnabled() const { return mFullScreenButtonEnabled; }
+		//! Returns whether the Window created will have transparent background. Defaults to \c false.
+		bool        isTransparent() const { return mTransparent; }
+		//! Sets whether the Window created will have transparent background. Defaults to \c false.
+		void		setTransparent( bool transparent = true ) { mTransparent = transparent; }
+		//! Sets whether the Window created will have transparent background. Defaults to \c false.
+		Format&		transparent( bool transparent = true ) { mTransparent = transparent; return *this; }
 
 		//! Returns the title of the Window as a UTF-8 string.
 		std::string getTitle() const { return mTitle; }
@@ -257,7 +263,7 @@ class CI_API Window : public std::enable_shared_from_this<Window> {
 		DisplayRef				mDisplay;
 		ivec2					mSize, mPos;
 		bool					mPosSpecified;
-		bool					mResizable, mBorderless, mAlwaysOnTop, mFullScreenButtonEnabled;
+		bool					mResizable, mBorderless, mAlwaysOnTop, mFullScreenButtonEnabled, mTransparent;
 		std::string				mTitle;
 		bool					mTitleSpecified;
 
