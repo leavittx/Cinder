@@ -79,6 +79,11 @@ public:
 	bool              mShowEarth;
 	bool              mShowText;
 	bool              mShowQuakes;
+	int               windowLeft;
+	int               windowTop;
+	int               windowWidth;
+	int               windowHeight;
+	bool              isBigScreen;
 };
 
 void EarthquakeApp::prepareSettings( Settings *settings )
@@ -87,13 +92,18 @@ void EarthquakeApp::prepareSettings( Settings *settings )
 	settings->disableFrameRate();
 	settings->setResizable( true );
 	settings->setFullScreen( false );
-  settings->setBorderless( true );
+    settings->setBorderless( true );
+	settings->setTransparent( true );
 }
 
 void EarthquakeApp::setup()
 {
-  enableBlurBehind((HWND)getWindow()->getNative());
-
+  //enableBlurBehind((HWND)getWindow()->getNative());
+	windowLeft = this->getWindowPosX();
+	windowTop = this->getWindowPosY();
+	windowWidth = this->getWindowWidth();
+	windowHeight = this->getWindowHeight();
+	isBigScreen = false;
 	// Load the texture and create the sphere for the background.
 	mStars = gl::Texture2d::create( loadImage( loadResource( RES_STARS_PNG ) ) );
 	mStarSphere = gl::Batch::create( geom::Sphere().radius( 15000 ).subdivisions( 30 ), gl::getStockShader( gl::ShaderDef().texture() ) );
@@ -116,13 +126,26 @@ void EarthquakeApp::keyDown( KeyEvent event )
 {
 	if( event.getChar() == 'f' ) {
 		// Toggle full screen.
-		setFullScreen( !isFullScreen() );
+		//setFullScreen( !isFullScreen() );
+		if (!isBigScreen) {
+			DisplayRef display = Display::getMainDisplay();
+			ivec2 displaySize = display->getSize();
+			this->setWindowPos(0, 0);
+			this->setWindowSize(displaySize.x, displaySize.y + 1);
+		} else {
+			this->setWindowPos(windowLeft, windowTop);
+			this->setWindowSize(windowWidth, windowHeight);
+		}
+		isBigScreen = !isBigScreen;
 	}
 	else if( event.getCode() == app::KeyEvent::KEY_ESCAPE ) {
 		if( isFullScreen() )
 			setFullScreen( false );
 		else
 			quit();
+	}
+	else if (event.getChar() == 'b') {
+		this->getWindow()->setBorderless(!this->getWindow()->isBorderless());
 	}
 	else if( event.getChar() == 's' ) {
 		mSaveFrames = !mSaveFrames;

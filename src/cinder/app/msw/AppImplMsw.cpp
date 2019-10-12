@@ -300,6 +300,7 @@ WindowImplMsw::WindowImplMsw( const Window::Format &format, RendererRef sharedRe
 	mResizable = format.isResizable();
 	mAlwaysOnTop = format.isAlwaysOnTop();
 	mBorderless = format.isBorderless();
+	mTransparent = format.isTransparent();
 
 	if( ! mDisplay )
 		mDisplay = Display::getMainDisplay();
@@ -350,7 +351,7 @@ void WindowImplMsw::setWindowStyleValues()
 		mWindowStyle = WS_POPUP;										// Windows Style
 	}
 	else if( mBorderless ) {
-		mWindowExStyle = WS_EX_APPWINDOW;
+		mWindowExStyle = mTransparent ? WS_EX_LAYERED : WS_EX_APPWINDOW;
 		mWindowStyle = WS_POPUP;
 	}
 	else {
@@ -400,6 +401,10 @@ void WindowImplMsw::createWindow( const ivec2 &windowSize, const std::string &ti
 	{
 		//killWindow();							// Reset The Display
 		return;		
+	}
+
+	if (mBorderless && mTransparent) {
+		SetLayeredWindowAttributes(mWnd, RGB( 0, 0, 0 ), 0, LWA_COLORKEY);
 	}
 
 	mDC = ::GetDC( mWnd );
@@ -735,33 +740,50 @@ unsigned int prepKeyEventModifiers()
 void WindowImplMsw::setBorderless( bool borderless )
 {
 	if( mBorderless != borderless ) {
-		mBorderless = borderless;
-		if( mBorderless ) {
-			mWindowExStyle = WS_EX_APPWINDOW;
-			mWindowStyle = WS_POPUP;
-		}
-		else {
-			mWindowExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES;	// Window Extended Style
-			mWindowStyle = ( mResizable ) ? WS_OVERLAPPEDWINDOW
-				:	( WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME );							// Windows Style
-		}
+		forceSetBorderless(borderless);
+	}
+}
 
-		POINT upperLeft;
-		upperLeft.x = upperLeft.y = 0;
-		::ClientToScreen( mWnd, &upperLeft );
+void WindowImplMsw::forceSetBorderless( bool borderless )
+{
+	mBorderless = borderless;
+	if (mBorderless) {
+		mWindowExStyle = mTransparent ? WS_EX_LAYERED : WS_EX_APPWINDOW;
+		mWindowStyle = WS_POPUP;
+	}
+	else {
+		mWindowExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES;	// Window Extended Style
+		mWindowStyle = (mResizable) ? WS_OVERLAPPEDWINDOW
+			: (WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME);							// Windows Style
+	}
 
-		RECT windowRect;
-		::GetClientRect( mWnd, &windowRect );
-		windowRect.left += upperLeft.x; windowRect.right += upperLeft.x;
-		windowRect.top += upperLeft.y; windowRect.bottom += upperLeft.y;
-		::AdjustWindowRectEx( &windowRect, mWindowStyle, FALSE, mWindowExStyle );		// Adjust Window To True Requested Size
+	POINT upperLeft;
+	upperLeft.x = upperLeft.y = 0;
+	::ClientToScreen(mWnd, &upperLeft);
 
-		::SetWindowLongA( mWnd, GWL_STYLE, mWindowStyle );
-		::SetWindowLongA( mWnd, GWL_EXSTYLE, mWindowExStyle );
-		::SetWindowPos( mWnd, HWND_TOP, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
-				SWP_FRAMECHANGED|SWP_SHOWWINDOW|SWP_NOZORDER );
-		if( mBorderless )
-			::InvalidateRect( 0, NULL, TRUE );
+	RECT windowRect;
+	::GetClientRect(mWnd, &windowRect);
+	windowRect.left += upperLeft.x; windowRect.right += upperLeft.x;
+	windowRect.top += upperLeft.y; windowRect.bottom += upperLeft.y;
+	::AdjustWindowRectEx(&windowRect, mWindowStyle, FALSE, mWindowExStyle);		// Adjust Window To True Requested Size
+
+	::SetWindowLongA(mWnd, GWL_STYLE, mWindowStyle);
+	::SetWindowLongA(mWnd, GWL_EXSTYLE, mWindowExStyle);
+	::SetWindowPos(mWnd, HWND_TOP, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
+		SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOZORDER);
+	if (mBorderless)
+		::InvalidateRect(0, NULL, TRUE);
+	if (mTransparent) {
+		SetLayeredWindowAttributes(mWnd, RGB(0, 0, 0), 0, LWA_COLORKEY);
+	}
+}
+
+void WindowImplMsw::setTransparent( bool transparent )
+{
+	if (mTransparent != transparent && mBorderless) {
+		mTransparent = transparent;
+		
+		forceSetBorderless(mBorderless);
 	}
 }
 
