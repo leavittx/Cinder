@@ -14,6 +14,8 @@
 // For transparency stuff
 #include <dwmapi.h>
 #pragma comment(lib, "Dwmapi.lib")
+// Check windows versions
+#include <VersionHelpers.h>
 
 
 using namespace ci;
@@ -45,6 +47,14 @@ namespace
     }
     return false;
   }
+
+#ifndef _WIN32_WINNT_WIN10
+  #define _WIN32_WINNT_WIN10                  0x0A00 // Windows 10
+  bool IsWindowsVersion10OrGreater()
+  {
+    return IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN10), LOBYTE(_WIN32_WINNT_WIN10), 0);
+  }
+#endif
 }
 
 
@@ -92,13 +102,20 @@ void EarthquakeApp::prepareSettings( Settings *settings )
 	settings->disableFrameRate();
 	settings->setResizable( true );
 	settings->setFullScreen( false );
-    settings->setBorderless( true );
-	settings->setTransparent( true );
+	settings->setBorderless( true );
+	if (IsWindowsVersion10OrGreater())
+	{
+		settings->setTransparent( true );
+	}
 }
 
 void EarthquakeApp::setup()
 {
-  //enableBlurBehind((HWND)getWindow()->getNative());
+	if (!IsWindowsVersion10OrGreater())
+	{
+		enableBlurBehind((HWND)getWindow()->getNative());
+	}
+
 	windowLeft = this->getWindowPosX();
 	windowTop = this->getWindowPosY();
 	windowWidth = this->getWindowWidth();
