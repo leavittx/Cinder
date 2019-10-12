@@ -144,6 +144,9 @@ void EarthquakeApp::keyDown( KeyEvent event )
 		else
 			quit();
 	}
+	else if (event.getChar() == 'b') {
+		this->getWindow()->setBorderless(!this->getWindow()->isBorderless());
+	}
 	else if( event.getChar() == 's' ) {
 		mSaveFrames = !mSaveFrames;
 	}

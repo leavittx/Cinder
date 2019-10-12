@@ -404,7 +404,7 @@ void WindowImplMsw::createWindow( const ivec2 &windowSize, const std::string &ti
 	}
 
 	if (mBorderless && mTransparent) {
-		SetLayeredWindowAttributes(mWnd, 0x0, 0, LWA_COLORKEY);
+		SetLayeredWindowAttributes(mWnd, RGB( 0, 0, 0 ), 0, LWA_COLORKEY);
 	}
 
 	mDC = ::GetDC( mWnd );
@@ -773,6 +773,9 @@ void WindowImplMsw::forceSetBorderless( bool borderless )
 		SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOZORDER);
 	if (mBorderless)
 		::InvalidateRect(0, NULL, TRUE);
+	if (mTransparent) {
+		SetLayeredWindowAttributes(mWnd, RGB(0, 0, 0), 0, LWA_COLORKEY);
+	}
 }
 
 void WindowImplMsw::setTransparent( bool transparent )
